@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
+import random
 
 
 class Subject(models.Model):
@@ -79,6 +80,17 @@ class Question(models.Model):
             'c': self.option_c,
             'd': self.option_d,
         }
+
+    def get_shuffled_options(self):
+        """Tasodifiy tartibda javob variantlarini qaytarish"""
+        options = [
+            ('a', self.option_a),
+            ('b', self.option_b),
+            ('c', self.option_c),
+            ('d', self.option_d),
+        ]
+        random.shuffle(options)
+        return options
 
     def check_answer(self, answer):
         return answer.lower() == self.correct_answer.lower()
