@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required
 from .models import Subject, Topic, Question
 
 
@@ -21,6 +22,7 @@ def subject_topics(request, subject_slug):
     })
 
 
+@login_required
 def start_quiz(request, topic_slug):
     """Testni boshlash sahifasi"""
     topic = get_object_or_404(Topic, slug=topic_slug)
@@ -40,6 +42,7 @@ def start_quiz(request, topic_slug):
     return redirect('quiz:quiz_question')
 
 
+@login_required
 def quiz_question(request):
     """Test savollarini ko'rsatish"""
     quiz_data = request.session.get('quiz_data')
@@ -99,6 +102,7 @@ def submit_answer(request):
     })
 
 
+@login_required
 def quiz_result(request):
     """Test natijalari sahifasi"""
     quiz_data = request.session.get('quiz_data')

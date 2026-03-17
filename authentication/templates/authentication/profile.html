@@ -1,0 +1,55 @@
+{% extends 'quiz/base.html' %}
+
+{% block title %}Profil - Test Platformasi{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full">
+        <div class="text-center">
+            <div class="mx-auto h-20 w-20 flex items-center justify-center rounded-full bg-indigo-100">
+                <span class="text-3xl font-bold text-indigo-600">
+                    {{ user.username|first|upper }}
+                </span>
+            </div>
+            <h2 class="mt-6 text-3xl font-extrabold text-gray-900">
+                {{ user.username }}
+            </h2>
+            <p class="mt-2 text-sm text-gray-600">
+                {{ user.email|default:"Email kiritilmagan" }}
+            </p>
+        </div>
+        
+        <div class="mt-8 bg-white shadow rounded-lg p-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Profil ma'lumotlari</h3>
+            
+            <div class="space-y-3">
+                <div class="flex justify-between">
+                    <span class="text-sm font-medium text-gray-500">Foydalanuvchi nomi:</span>
+                    <span class="text-sm text-gray-900">{{ user.username }}</span>
+                </div>
+                
+                <div class="flex justify-between">
+                    <span class="text-sm font-medium text-gray-500">Email:</span>
+                    <span class="text-sm text-gray-900">{{ user.email|default:"Kiritilmagan" }}</span>
+                </div>
+                
+                <div class="flex justify-between">
+                    <span class="text-sm font-medium text-gray-500">Ro'yxatdan o'tgan:</span>
+                    <span class="text-sm text-gray-900">{{ user.date_joined|date:"d.m.Y H:i" }}</span>
+                </div>
+                
+                <div class="flex justify-between">
+                    <span class="text-sm font-medium text-gray-500">Oxirgi kirish:</span>
+                    <span class="text-sm text-gray-900">{{ user.last_login|date:"d.m.Y H:i"|default:"Hech qachon" }}</span>
+                </div>
+            </div>
+            
+            <div class="mt-6 pt-6 border-t border-gray-200">
+                <a href="{% url 'quiz:home' %}" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Testlarga qaytish
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

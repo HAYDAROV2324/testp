@@ -1,0 +1,119 @@
+{% extends 'quiz/base.html' %}
+
+{% block title %}Ro'yxatdan o'tish - Test Platformasi{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+        <div>
+            <div class="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-indigo-100">
+                <svg class="h-6 w-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                </svg>
+            </div>
+            <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                Ro'yxatdan o'tish
+            </h2>
+            <p class="mt-2 text-center text-sm text-gray-600">
+                Yoki{' '}
+                <a href="{% url 'auth:login' %}" class="font-medium text-indigo-600 hover:text-indigo-500">
+                    tizimga kiring
+                </a>
+            </p>
+        </div>
+        
+        <!-- Xabarlar -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="rounded-md {% if message.tags == 'error' %}bg-red-50 text-red-800{% elif message.tags == 'success' %}bg-green-50 text-green-800{% else %}bg-blue-50 text-blue-800{% endif %} p-4">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            {% if message.tags == 'error' %}
+                                <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                </svg>
+                            {% else %}
+                                <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                            {% endif %}
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium">{{ message }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        <form class="mt-8 space-y-6" method="POST">
+            {% csrf_token %}
+            
+            <div class="space-y-4">
+                <div>
+                    <label for="id_username" class="block text-sm font-medium text-gray-700">Foydalanuvchi nomi</label>
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.username.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="id_password1" class="block text-sm font-medium text-gray-700">Parol</label>
+                    {{ form.password1 }}
+                    {% if form.password1.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.password1.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="id_password2" class="block text-sm font-medium text-gray-700">Parolni qayta kiriting</label>
+                    {{ form.password2 }}
+                    {% if form.password2.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.password2.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div>
+                <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                        <svg class="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                        </svg>
+                    </span>
+                    Ro'yxatdan o'tish
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    #id_username, #id_password1, #id_password2 {
+        appearance: none;
+        position: relative;
+        display: block;
+        width: 100%;
+        padding: 10px 12px;
+        margin-top: 6px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        background-color: #ffffff;
+        font-size: 16px;
+        line-height: 1.5;
+        color: #374151;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+    
+    #id_username:focus, #id_password1:focus, #id_password2:focus {
+        outline: none;
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+    
+    #id_username::placeholder, #id_password1::placeholder, #id_password2::placeholder {
+        color: #9ca3af;
+    }
+</style>
+{% endblock %}
