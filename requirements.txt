@@ -9,8 +9,9 @@ python-dotenv==1.0.0
 # Google Gemini AI
 google-generativeai==0.3.2
 
-# Database (agar PostgreSQL ishlatsa)
+# Database
 psycopg2-binary==2.9.7
+dj-database-url==3.1.2
 
 # Development tools
 django-debug-toolbar==4.2.0
@@ -19,16 +20,16 @@ django-extensions==3.2.3
 # Security
 django-environ==0.11.2
 
-# Static files (agar kerak bo'lsa)
-whitenoise==6.6.0
+# Static files
+whitenoise==6.12.0
 
-# Image processing (agar kerak bo'lsa)
+# Image processing
 Pillow==10.0.1
 
-# Email (agar kerak bo'lsa)
+# Email
 django-anymail==10.2
 
-# API documentation (agar kerak bo'lsa)
+# API documentation
 drf-yasg==1.21.7
 
 # Testing
@@ -36,4 +37,5 @@ pytest-django==4.5.2
 pytest==7.4.3
 
 # Production server
-gunicorn==21.2.0
+gunicorn==25.1.0
+packaging==26.0
