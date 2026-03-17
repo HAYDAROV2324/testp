@@ -1,4 +1,5 @@
 {% extends 'quiz/base.html' %}
+{% load quiz_filters %}
 
 {% block title %}Test Natijalari - Test Platformasi{% endblock %}
 
@@ -61,7 +62,7 @@
                         stroke="{% if percentage >= 60 %}#10b981{% elif percentage >= 40 %}#f59e0b{% else %}#ef4444{% endif %}" 
                         stroke-width="8" fill="none"
                         stroke-dasharray="351.86"
-                        stroke-dashoffset="{{ 351.86 * (1 - percentage / 100) }}"
+                        stroke-dashoffset="{{ stroke_dashoffset }}"
                         stroke-linecap="round"
                         transform="rotate(-90 64 64)"></circle>
             </svg>
@@ -69,6 +70,72 @@
                 <span class="text-2xl font-bold text-gray-900">{{ percentage|floatformat:0 }}%</span>
             </div>
         </div>
+    </div>
+    
+    <!-- Recommendations -->
+    <div class="bg-gray-50 rounded-lg p-6">
+        <h4 class="text-lg font-semibold text-gray-900 mb-4">Tavsiyalar</h4>
+        {% if percentage >= 80 %}
+            <div class="space-y-2">
+                <div class="flex items-start">
+                    <span class="text-green-500 mr-2">🎯</span>
+                    <p class="text-gray-700">A'lo natija! Siz bu mavzuni yaxshi o'zlashtirgansiz.</p>
+                </div>
+                <div class="flex items-start">
+                    <span class="text-blue-500 mr-2">📚</span>
+                    <p class="text-gray-700">Keyingi murakkabroq mavzularni o'rganishni davom ettiring.</p>
+                </div>
+                <div class="flex items-start">
+                    <span class="text-purple-500 mr-2">🏆</span>
+                    <p class="text-gray-700">Boshqa fanlardagi testlar ham siz uchun qiziqarli bo'lishi mumkin.</p>
+                </div>
+            </div>
+        {% elif percentage >= 60 %}
+            <div class="space-y-2">
+                <div class="flex items-start">
+                    <span class="text-blue-500 mr-2">👍</span>
+                    <p class="text-gray-700">Yaxshi natija! Asosiy tushunchalarni tushungansiz.</p>
+                </div>
+                <div class="flex items-start">
+                    <span class="text-yellow-500 mr-2">📖</span>
+                    <p class="text-gray-700">Xato qilgan savollarni qayta ko'rib chiqing.</p>
+                </div>
+                <div class="flex items-start">
+                    <span class="text-green-500 mr-2">🔄</span>
+                    <p class="text-gray-700">Testni qayta yechib, natijangizni yaxshilashingiz mumkin.</p>
+                </div>
+            </div>
+        {% elif percentage >= 40 %}
+            <div class="space-y-2">
+                <div class="flex items-start">
+                    <span class="text-yellow-500 mr-2">📚</span>
+                    <p class="text-gray-700">Qoniqarli natija. Ko'proq mashq qiling kerak.</p>
+                </div>
+                <div class="flex items-start">
+                    <span class="text-red-500 mr-2">❓</span>
+                    <p class="text-gray-700">Noto'g'ri javoblarni tushunishga harakat qiling.</p>
+                </div>
+                <div class="flex items-start">
+                    <span class="text-blue-500 mr-2">📝</span>
+                    <p class="text-gray-700">Mavzu bo'yicha qo'shimcha materiallarni o'rganing.</p>
+                </div>
+            </div>
+        {% else %}
+            <div class="space-y-2">
+                <div class="flex items-start">
+                    <span class="text-red-500 mr-2">💪</span>
+                    <p class="text-gray-700">Sabr qiling, har bir katta yo'l kichik qadamlardan boshlanadi.</p>
+                </div>
+                <div class="flex items-start">
+                    <span class="text-yellow-500 mr-2">🎓</span>
+                    <p class="text-gray-700">Asosiy tushunchalarni o'rganishdan boshlang.</p>
+                </div>
+                <div class="flex items-start">
+                    <span class="text-blue-500 mr-2">🔄</span>
+                    <p class="text-gray-700">Testni bir necha marta yechib, o'rganishingiz mumkin.</p>
+                </div>
+            </div>
+        {% endif %}
     </div>
 </div>
 

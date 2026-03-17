@@ -129,12 +129,16 @@ def quiz_result(request):
     if 'quiz_data' in request.session:
         del request.session['quiz_data']
     
+    # Progress circle uchun hisoblash
+    stroke_dashoffset = 351.86 * (1 - percentage / 100)
+    
     return render(request, 'quiz/result.html', {
         'topic': topic,
         'total_questions': total_questions,
         'correct_answers': correct_answers,
         'percentage': percentage,
-        'question_results': question_results
+        'question_results': question_results,
+        'stroke_dashoffset': stroke_dashoffset
     })
 
 
