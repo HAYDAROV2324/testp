@@ -1,0 +1,272 @@
+{% extends 'quiz/base.html' %}
+
+{% block title %}Savol {{ current_number }} - Test Platformasi{% endblock %}
+
+{% block extra_css %}
+<style>
+    .option-card {
+        transition: all 0.3s ease;
+    }
+    .option-card:hover {
+        transform: translateY(-2px);
+    }
+    .option-card.selected {
+        border-color: #4f46e5;
+        background-color: #eef2ff;
+    }
+    .option-card.correct {
+        border-color: #10b981;
+        background-color: #d1fae5;
+    }
+    .option-card.incorrect {
+        border-color: #ef4444;
+        background-color: #fee2e2;
+    }
+    .progress-bar {
+        transition: width 0.5s ease;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Progress Bar -->
+<div class="mb-8">
+    <div class="flex justify-between items-center mb-2">
+        <span class="text-sm font-medium text-gray-700">
+            Test jarayoni
+        </span>
+        <span class="text-sm font-medium text-gray-700">
+            {{ current_number }} / {{ total_questions }}
+        </span>
+    </div>
+    <div class="w-full bg-gray-200 rounded-full h-2">
+        <div class="progress-bar bg-indigo-600 h-2 rounded-full" style="width: {{ progress }}%"></div>
+    </div>
+</div>
+
+<!-- Question Card -->
+<div class="bg-white rounded-lg shadow-lg p-8 max-w-4xl mx-auto">
+    <div class="mb-8">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-2xl font-bold text-gray-900">
+                Savol {{ current_number }}
+            </h2>
+            <div class="text-sm text-gray-500">
+                Mavzu: {{ question.topic.name }}
+            </div>
+        </div>
+        
+        <div class="text-lg text-gray-800 leading-relaxed">
+            {{ question.question_text }}
+        </div>
+    </div>
+
+    <!-- Options -->
+    <div class="space-y-4" id="options-container">
+        <div class="option-card border-2 border-gray-200 rounded-lg p-4 cursor-pointer hover:border-gray-300" data-option="a">
+            <div class="flex items-center">
+                <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center mr-4 font-semibold text-gray-600">
+                    A
+                </div>
+                <div class="flex-1 text-gray-800">
+                    {{ question.option_a }}
+                </div>
+            </div>
+        </div>
+
+        <div class="option-card border-2 border-gray-200 rounded-lg p-4 cursor-pointer hover:border-gray-300" data-option="b">
+            <div class="flex items-center">
+                <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center mr-4 font-semibold text-gray-600">
+                    B
+                </div>
+                <div class="flex-1 text-gray-800">
+                    {{ question.option_b }}
+                </div>
+            </div>
+        </div>
+
+        <div class="option-card border-2 border-gray-200 rounded-lg p-4 cursor-pointer hover:border-gray-300" data-option="c">
+            <div class="flex items-center">
+                <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center mr-4 font-semibold text-gray-600">
+                    C
+                </div>
+                <div class="flex-1 text-gray-800">
+                    {{ question.option_c }}
+                </div>
+            </div>
+        </div>
+
+        <div class="option-card border-2 border-gray-200 rounded-lg p-4 cursor-pointer hover:border-gray-300" data-option="d">
+            <div class="flex items-center">
+                <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center mr-4 font-semibold text-gray-600">
+                    D
+                </div>
+                <div class="flex-1 text-gray-800">
+                    {{ question.option_d }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="mt-8 flex justify-center">
+        <button id="submit-btn" 
+                disabled
+                class="bg-indigo-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors duration-200">
+            Javobni yuborish
+        </button>
+    </div>
+</div>
+
+<!-- Feedback Modal -->
+<div id="feedback-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-8 max-w-md mx-4">
+        <div id="feedback-content">
+            <!-- Feedback content will be inserted here -->
+        </div>
+        <div class="mt-6 flex justify-center">
+            <button id="next-btn" class="bg-indigo-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-indigo-700 transition-colors">
+                Keyingi savol
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let selectedOption = null;
+let isSubmitting = false;
+
+// Option selection
+document.querySelectorAll('.option-card').forEach(card => {
+    card.addEventListener('click', function() {
+        if (isSubmitting) return;
+        
+        // Remove previous selection
+        document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+        
+        // Add selection to clicked card
+        this.classList.add('selected');
+        selectedOption = this.dataset.option;
+        
+        // Enable submit button
+        document.getElementById('submit-btn').disabled = false;
+    });
+});
+
+// Submit answer
+document.getElementById('submit-btn').addEventListener('click', function() {
+    if (!selectedOption || isSubmitting) return;
+    
+    isSubmitting = true;
+    this.disabled = true;
+    
+    // Disable all options
+    document.querySelectorAll('.option-card').forEach(card => {
+        card.style.pointerEvents = 'none';
+    });
+    
+    // Submit answer via AJAX
+    const formData = new FormData();
+    formData.append('question_id', '{{ question.id }}');
+    formData.append('answer', selectedOption);
+    
+    fetch('{% url "quiz:submit_answer" %}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            alert(data.error);
+            return;
+        }
+        
+        // Show feedback
+        showFeedback(data.is_correct, data.correct_answer, data.has_next);
+        
+        // Highlight correct/incorrect answers
+        highlightAnswers(data.is_correct, data.correct_answer);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Xatolik yuz berdi. Iltimos, qayta urinib ko\'ring.');
+        isSubmitting = false;
+        this.disabled = false;
+    });
+});
+
+// Show feedback modal
+function showFeedback(isCorrect, correctAnswer, hasNext) {
+    const modal = document.getElementById('feedback-modal');
+    const content = document.getElementById('feedback-content');
+    
+    if (isCorrect) {
+        content.innerHTML = `
+            <div class="text-center">
+                <div class="text-green-500 text-6xl mb-4">✅</div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">To\'g\'ri javob!</h3>
+                <p class="text-gray-600">Ajoyib! Siz to\'g\'ri javobni topdingiz.</p>
+            </div>
+        `;
+    } else {
+        content.innerHTML = `
+            <div class="text-center">
+                <div class="text-red-500 text-6xl mb-4">❌</div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">Noto\'g\'ri javob</h3>
+                <p class="text-gray-600 mb-2">To\'g\'ri javob: <span class="font-semibold">${correctAnswer.toUpperCase()}</span></p>
+                <p class="text-gray-500 text-sm">Keyingi safar yaxshiroq bo\'ladi!</p>
+            </div>
+        `;
+    }
+    
+    // Update next button text
+    const nextBtn = document.getElementById('next-btn');
+    if (hasNext) {
+        nextBtn.textContent = 'Keyingi savol';
+        nextBtn.onclick = () => {
+            window.location.href = '{% url "quiz:quiz_question" %}';
+        };
+    } else {
+        nextBtn.textContent = 'Natijalarni ko\'rish';
+        nextBtn.onclick = () => {
+            window.location.href = '{% url "quiz:quiz_result" %}';
+        };
+    }
+    
+    modal.classList.remove('hidden');
+}
+
+// Highlight answers
+function highlightAnswers(isCorrect, correctAnswer) {
+    document.querySelectorAll('.option-card').forEach(card => {
+        const option = card.dataset.option;
+        if (option === correctAnswer) {
+            card.classList.add('correct');
+        } else if (option === selectedOption && !isCorrect) {
+            card.classList.add('incorrect');
+        }
+    });
+}
+
+// Get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'quiz/base.html' %}
+
+{% block title %}Savollar mavjud emas - Test Platformasi{% endblock %}
+
+{% block content %}
+<div class="text-center py-12">
+    <div class="text-gray-400 text-6xl mb-6">📝</div>
+    <h1 class="text-3xl font-bold text-gray-900 mb-4">Savollar mavjud emas</h1>
+    <p class="text-lg text-gray-600 mb-8">
+        "{{ topic.name }}" mavzusi uchun hozircha savollar mavjud emas.
+    </p>
+    
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 max-w-md mx-auto mb-8">
+        <div class="flex items-center mb-4">
+            <svg class="w-6 h-6 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <h3 class="text-lg font-semibold text-blue-900">Nima qilish kerak?</h3>
+        </div>
+        <p class="text-blue-800 text-sm">
+            Iltimos, admin panel orqali ushbu mavzuga savollarni qo'shing. Savollar qo'shilgandan so'ng testni boshlashingiz mumkin bo'ladi.
+        </p>
+    </div>
+    
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/admin/quiz/question/add/?topic={{ topic.id }}" 
+           class="inline-flex items-center justify-center bg-indigo-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-indigo-700 transition-colors duration-200">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            Savol qo'shish
+        </a>
+        
+        <a href="{% url 'quiz:subject_topics' topic.subject.slug %}" 
+           class="inline-flex items-center justify-center bg-gray-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-700 transition-colors duration-200">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"></path>
+            </svg>
+            Mavzular ro'yxatiga qaytish
+        </a>
+    </div>
+</div>
+{% endblock %}

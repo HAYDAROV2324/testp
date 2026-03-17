@@ -1,0 +1,110 @@
+{% extends 'quiz/base.html' %}
+
+{% block title %}{{ subject.name }} - Test Platformasi{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav class="mb-8">
+    <ol class="flex items-center space-x-2 text-sm text-gray-500">
+        <li>
+            <a href="{% url 'quiz:home' %}" class="hover:text-gray-700 transition-colors">
+                Bosh sahifa
+            </a>
+        </li>
+        <li class="flex items-center">
+            <svg class="w-4 h-4 mx-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+            <span class="text-gray-900 font-medium">{{ subject.name }}</span>
+        </li>
+    </ol>
+</nav>
+
+<!-- Subject Header -->
+<div class="bg-white rounded-lg shadow-md p-6 mb-8">
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ subject.name }}</h1>
+            <p class="text-gray-600">
+                {{ subject.name }} faniga oid {{ topics.count }} ta mavzu mavjud
+            </p>
+        </div>
+        <div class="text-center">
+            <div class="text-4xl mb-2">
+                {% if subject.name == 'Matematika' %}🔢
+                {% elif subject.name == 'Fizika' %}⚛️
+                {% elif subject.name == 'Kimyo' %}🧪
+                {% elif subject.name == 'Biologiya' %}🧬
+                {% elif subject.name == 'Informatika' %>💻
+                {% elif subject.name == 'Tarix' %>📚
+                {% elif subject.name == 'Geografiya' %}🌍
+                {% elif subject.name == 'Adabiyot' %>📖
+                {% else %}📚{% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Topics Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for topic in topics %}
+    <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden group">
+        <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                </div>
+                <span class="text-sm text-gray-500">
+                    {{ topic.questions.count }} savol
+                </span>
+            </div>
+            
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">
+                {{ topic.name }}
+            </h3>
+            
+            <p class="text-gray-600 text-sm mb-4">
+                {{ topic.name }} mavzusi bo'yicha test
+            </p>
+            
+            {% if topic.questions.count > 0 %}
+                <a href="{% url 'quiz:start_quiz' topic.slug %}" 
+                   class="inline-flex items-center justify-center w-full bg-green-600 text-white px-4 py-2 rounded-md font-medium hover:bg-green-700 transition-colors duration-200">
+                    Testni boshlash
+                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </a>
+            {% else %}
+                <div class="inline-flex items-center justify-center w-full bg-gray-300 text-gray-500 px-4 py-2 rounded-md font-medium cursor-not-allowed">
+                    Savollar mavjud emas
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-span-full text-center py-12">
+        <div class="text-gray-400 text-6xl mb-4">📝</div>
+        <h3 class="text-xl font-semibold text-gray-900 mb-2">Hozircha mavzular yo'q</h3>
+        <p class="text-gray-600 mb-6">Iltimos, admin panel orqali mavzularni qo'shing</p>
+        <a href="/admin/quiz/topic/add/?subject={{ subject.id }}" class="bg-indigo-600 text-white px-6 py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors">
+            Mavzu qo'shish
+        </a>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Back Button -->
+<div class="mt-8">
+    <a href="{% url 'quiz:home' %}" 
+       class="inline-flex items-center text-gray-600 hover:text-gray-900 font-medium transition-colors">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+        Orqaga qaytish
+    </a>
+</div>
+{% endblock %}

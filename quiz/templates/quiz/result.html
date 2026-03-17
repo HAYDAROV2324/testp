@@ -1,0 +1,147 @@
+{% extends 'quiz/base.html' %}
+
+{% block title %}Test Natijalari - Test Platformasi{% endblock %}
+
+{% block content %}
+<!-- Result Header -->
+<div class="text-center mb-12">
+    <div class="mb-6">
+        {% if percentage >= 80 %}
+            <div class="text-6xl mb-4">🏆</div>
+            <h1 class="text-4xl font-bold text-green-600 mb-2">Ajoyib!</h1>
+            <p class="text-xl text-gray-700">Siz testni a'lo baholaganmiz!</p>
+        {% elif percentage >= 60 %}
+            <div class="text-6xl mb-4">👍</div>
+            <h1 class="text-4xl font-bold text-blue-600 mb-2">Yaxshi!</h1>
+            <p class="text-xl text-gray-700">Yaxshi natija! Qo'shimcha mashq qiling.</p>
+        {% elif percentage >= 40 %}
+            <div class="text-6xl mb-4">📚</div>
+            <h1 class="text-4xl font-bold text-yellow-600 mb-2">Qoniqarli</h1>
+            <p class="text-xl text-gray-700">Yaxshilash uchun imkoniyat bor</p>
+        {% else %}
+            <div class="text-6xl mb-4">💪</div>
+            <h1 class="text-4xl font-bold text-red-600 mb-2">Harakat qiling!</h1>
+            <p class="text-xl text-gray-700">Ko'proq mashq qiling, yaxshiroq bo'ladi!</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Score Card -->
+<div class="bg-white rounded-lg shadow-lg p-8 max-w-4xl mx-auto mb-8">
+    <div class="text-center mb-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">Test Natijalari</h2>
+        <div class="text-gray-600 mb-2">
+            <strong>Mavzu:</strong> {{ topic.name }}
+        </div>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="text-center">
+            <div class="text-3xl font-bold text-gray-900 mb-2">{{ correct_answers }}</div>
+            <div class="text-gray-600">To'g'ri javoblar</div>
+        </div>
+        <div class="text-center">
+            <div class="text-3xl font-bold text-gray-900 mb-2">{{ total_questions }}</div>
+            <div class="text-gray-600">Jami savollar</div>
+        </div>
+        <div class="text-center">
+            <div class="text-3xl font-bold {% if percentage >= 60 %}text-green-600{% elif percentage >= 40 %}text-yellow-600{% else %}text-red-600{% endif %} mb-2">
+                {{ percentage|floatformat:1 }}%
+            </div>
+            <div class="text-gray-600">Foiz natija</div>
+        </div>
+    </div>
+    
+    <!-- Progress Circle -->
+    <div class="flex justify-center mb-8">
+        <div class="relative">
+            <svg class="w-32 h-32">
+                <circle cx="64" cy="64" r="56" stroke="#e5e7eb" stroke-width="8" fill="none"></circle>
+                <circle cx="64" cy="64" r="56" 
+                        stroke="{% if percentage >= 60 %}#10b981{% elif percentage >= 40 %}#f59e0b{% else %}#ef4444{% endif %}" 
+                        stroke-width="8" fill="none"
+                        stroke-dasharray="351.86"
+                        stroke-dashoffset="{{ 351.86 * (1 - percentage / 100) }}"
+                        stroke-linecap="round"
+                        transform="rotate(-90 64 64)"></circle>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center">
+                <span class="text-2xl font-bold text-gray-900">{{ percentage|floatformat:0 }}%</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Detailed Results -->
+<div class="bg-white rounded-lg shadow-lg p-8 max-w-4xl mx-auto mb-8">
+    <h3 class="text-xl font-bold text-gray-900 mb-6">Batafsil natijalar</h3>
+    
+    <div class="space-y-4">
+        {% for result in question_results %}
+        <div class="border rounded-lg p-4 {% if result.is_correct %}border-green-200 bg-green-50{% else %}border-red-200 bg-red-50{% endif %}">
+            <div class="flex items-start justify-between">
+                <div class="flex-1">
+                    <div class="flex items-center mb-2">
+                        <span class="text-sm font-medium text-gray-500 mr-2">Savol {{ forloop.counter }}:</span>
+                        {% if result.is_correct %}
+                            <span class="text-green-600 text-sm font-medium">✅ To'g'ri</span>
+                        {% else %}
+                            <span class="text-red-600 text-sm font-medium">❌ Noto'g'ri</span>
+                        {% endif %}
+                    </div>
+                    <p class="text-gray-800 mb-2">{{ result.question.question_text }}</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                        <div>
+                            <span class="font-medium text-gray-600">Sizning javobingiz:</span>
+                            <span class="ml-2 {% if result.is_correct %}text-green-600{% else %}text-red-600{% endif %}">
+                                {% if result.user_answer %}
+                                    {{ result.user_answer|upper }}) {{ result.question.get_options|lookup:result.user_answer }}
+                                {% else %}
+                                    Javob berilmagan
+                                {% endif %}
+                            </span>
+                        </div>
+                        {% if not result.is_correct %}
+                        <div>
+                            <span class="font-medium text-gray-600">To'g'ri javob:</span>
+                            <span class="ml-2 text-green-600">
+                                {{ result.question.correct_answer|upper }}) {{ result.question.get_options|lookup:result.question.correct_answer }}
+                            </span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Action Buttons -->
+<div class="flex flex-col sm:flex-row gap-4 justify-center">
+    <a href="{% url 'quiz:start_quiz' topic.slug %}" 
+       class="inline-flex items-center justify-center bg-indigo-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-indigo-700 transition-colors duration-200">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+        </svg>
+        Testni qayta boshlash
+    </a>
+    
+    <a href="{% url 'quiz:subject_topics' topic.subject.slug %}" 
+       class="inline-flex items-center justify-center bg-gray-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-700 transition-colors duration-200">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"></path>
+        </svg>
+        Mavzular ro'yxatiga qaytish
+    </a>
+    
+    <a href="{% url 'quiz:home' %}" 
+       class="inline-flex items-center justify-center border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors duration-200">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+        </svg>
+        Bosh sahifa
+    </a>
+</div>
+{% endblock %}
