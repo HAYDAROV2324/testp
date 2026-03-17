@@ -3,7 +3,38 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
+import google.generativeai as genai
 from .models import Subject, Topic, Question
+
+
+def get_ai_analysis(subject_name, topic_name, percentage):
+    """AI dan test natijalari bo'yicha xulosa olish (faqat Gemini)"""
+    print(f"DEBUG: AI analysis called with {subject_name}, {topic_name}, {percentage}%")
+    print(f"DEBUG: GEMINI_API_KEY exists = {bool(settings.GEMINI_API_KEY)}")
+    print(f"DEBUG: GEMINI_API_KEY length = {len(settings.GEMINI_API_KEY) if settings.GEMINI_API_KEY else 0}")
+    
+    try:
+        if settings.GEMINI_API_KEY and len(settings.GEMINI_API_KEY) > 10:
+            print("DEBUG: Using Gemini API")
+            genai.configure(api_key=settings.GEMINI_API_KEY)
+            model = genai.GenerativeModel('gemini-1.5-flash')
+            
+            prompt = f"Sen tajribali ustozsan. Talabaning {subject_name} fanining {topic_name} bo'yicha test natijasi {percentage} foiz bo'ldi. Unga qisqa, motivatsion va qaysi mavzularda ko'proq ishlashi kerakligi haqida professional xulosa ber. Javobing 3-4 gapdan oshmasin."
+            
+            response = model.generate_content(prompt)
+            result = response.text.strip()
+            print(f"DEBUG: Gemini response received: {result}")
+            return result
+        else:
+            print("DEBUG: Gemini API key not found or invalid")
+            return None
+            
+    except Exception as e:
+        print(f"DEBUG: AI API error: {e}")
+        import traceback
+        traceback.print_exc()
+        return None
 
 
 def home(request):
@@ -117,6 +148,9 @@ def quiz_result(request):
     correct_answers = sum(1 for ans in answers.values() if ans['is_correct'])
     percentage = (correct_answers / total_questions * 100) if total_questions > 0 else 0
     
+    # AI xulosasini olish
+    ai_analysis = get_ai_analysis(topic.subject.name, topic.name, percentage)
+    
     # Savollar va to'g'ri javoblarni olish
     questions = Question.objects.filter(id__in=quiz_data['question_ids'])
     question_results = []
@@ -142,7 +176,9 @@ def quiz_result(request):
         'correct_answers': correct_answers,
         'percentage': percentage,
         'question_results': question_results,
-        'stroke_dashoffset': stroke_dashoffset
+        'stroke_dashoffset': stroke_dashoffset,
+        'ai_analysis': ai_analysis,
+        'ai_available': bool(ai_analysis)
     })
 
 
