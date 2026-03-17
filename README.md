@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 📚 Test Platformasi
 
 Interaktiv test platformasi - foydalanuvchilarga turli fanlar bo'yicha testlar topshirish imkonini beruvchi zamonaviy veb-ilova.
@@ -209,3 +210,7 @@ Agar savollaringiz bo'lsa:
 ---
 
 ⭐ Agar loyiha foydali bo'lsa, repozitoriyaga yulduz qo'ying!
+=======
+# testp
+online test platformasi maktab o'quvchilari uchun
+>>>>>>> dece92bc0f3675b23277a4a731f4809bbedfdb3c
